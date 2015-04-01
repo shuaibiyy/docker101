@@ -1,0 +1,18 @@
+gateway:
+  image: demo/kaazing-jms-gateway-4.0.7
+  ports:
+   - "8000:8000"
+   - "8001:8001"
+  links:
+   - activemq
+  environment:
+   - DNSDOCK_IMAGE=demo
+
+activemq:
+  image: demo/activemq-5.10.0
+  ports:
+   - 8161
+  environment:
+   - DNSDOCK_IMAGE=demo
+
+dns: 172.17.42.1
