@@ -14,4 +14,4 @@ Try out the gateway:
     <DOCKER_HOST_IP>:8001
 
 # Note:
-* <DOCKER_HOST_IP> refers to the ip of the host on which the container is running. If you're using boot2docker, this would be boot2docker's ip.
+* DOCKER_HOST_IP refers to the ip of the host on which the container is running. If you're using boot2docker, this would be boot2docker's ip.
