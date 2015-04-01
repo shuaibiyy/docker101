@@ -12,3 +12,5 @@
 
 # Start up dns
 sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock --name dnsdock -p 172.17.42.1:53:53/udp tonistiigi/dnsdock -domain kaazing.test
+
+# Follow instructions on https://github.com/tonistiigi/dnsdock to get this working on Mac OSX

@@ -6,6 +6,7 @@ gateway:
   links:
    - activemq
   environment:
+   - DNSDOCK_NAME=gateway
    - DNSDOCK_IMAGE=demo
 
 activemq:
@@ -13,6 +14,5 @@ activemq:
   ports:
    - 8161
   environment:
+   - DNSDOCK_NAME=activemq
    - DNSDOCK_IMAGE=demo
-
-dns: 172.17.42.1
