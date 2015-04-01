@@ -1,0 +1,59 @@
+<beans xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd" xmlns="http://www.springframework.org/schema/beans" xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+<property name="locations">
+<value>
+file:${activemq.base}/conf/credentials.properties
+</value>
+</property>
+</bean>
+<broker brokerName="broker-${HOSTNAME}" useJmx="true" advisorySupport="true" splitSystemUsageForProducersConsumers="true" cacheTempDestinations="true" persistent="false" dataDirectory="${activemq.base}/data" xmlns="http://activemq.apache.org/schema/core">
+<destinationPolicy>
+<policyMap>
+<policyEntries>
+<policyEntry queue=">" producerFlowControl="true" optimizedDispatch="true">
+<deadLetterStrategy>
+<!-- Use the prefix 'DLQ.' for the destination name, and make the DLQ a queue rather than a topic -->
+<individualDeadLetterStrategy queuePrefix="DLQ." useQueueForQueueMessages="true"/>
+</deadLetterStrategy>
+</policyEntry>
+</policyEntries>
+</policyMap>
+</destinationPolicy>
+<managementContext>
+<managementContext connectorPort="1099" createConnector="true"/>
+</managementContext>
+<networkConnectors>
+<networkConnector name="nc1" uri="multicast://default?group=broker" dynamicOnly="true" conduitSubscriptions="false" decreaseNetworkConsumerPriority="true"/>
+</networkConnectors>
+<plugins>
+<loggingBrokerPlugin/>
+<!-- visualization plugins may use Graphviz for generating graphics 
+      <connectionDotFilePlugin file="${activemq.base}/data/ActiveMQConnections.dot"/>
+      <destinationDotFilePlugin file="${activemq.base}/data/ActiveMQDestinations.dot"/>
+-->
+<!-- statistics plugin required for the QueueWaitService -->
+<statisticsBrokerPlugin/>
+</plugins>
+<systemUsage>
+<systemUsage sendFailIfNoSpaceAfterTimeout="300">
+<memoryUsage>
+<memoryUsage limit="64 mb"/>
+</memoryUsage>
+<storeUsage>
+<storeUsage limit="1024 mb"/>
+</storeUsage>
+<tempUsage>
+<tempUsage limit="1024 mb"/>
+</tempUsage>
+</systemUsage>
+</systemUsage>
+<transportConnectors>
+<!-- Client connections -->
+<transportConnector name="openwire-clients" uri="tcp://0.0.0.0:61616" discoveryUri="multicast://default?group=client" enableStatusMonitor="true" updateClusterClients="true" updateClusterClientsOnRemove="true" rebalanceClusterClients="true"/>
+<transportConnector name="stomp" uri="stomp://0.0.0.0:61613" discoveryUri="multicast://default?group=client" enableStatusMonitor="true" updateClusterClients="true" updateClusterClientsOnRemove="true" rebalanceClusterClients="true"/>
+<!-- Broker connections -->
+<transportConnector name="openwire-brokers" uri="tcp://0.0.0.0:61617" discoveryUri="multicast://default?group=broker" enableStatusMonitor="true" updateClusterClients="true" updateClusterClientsOnRemove="true" rebalanceClusterClients="true"/>
+</transportConnectors>
+</broker>
+<import resource="jetty.xml"/>
+</beans>
